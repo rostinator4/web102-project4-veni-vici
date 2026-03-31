@@ -4,7 +4,7 @@ Submitted by: Rostislav Dadazhanov
 
 This web app: allows user to discover art from all over the world
 
-Time spent: 5 hours spent in total
+Time spent: 6 hours spent in total
 
 API used: https://github.com/harvardartmuseums/api-docs
 
