@@ -6,7 +6,7 @@ This web app: allows user to discover art from all over the world
 
 Time spent: 5 hours spent in total
 
-API used: (Harvard Museum's API Docs)[https://github.com/harvardartmuseums/api-docs]
+API used: https://github.com/harvardartmuseums/api-docs
 
 ## Required Features
 
