@@ -1,184 +1,127 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+.main-container {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+  background: url('./assets/Ninth-wave-high_background.webp') no-repeat center/cover;
+  /* Adds a slight dark tint to the image so white text pops more */
+  background-color: rgba(0, 0, 0, 0.4); 
+  background-blend-mode: overlay;
+  padding: 20px; /* Optional: adds a gap between the screen edge and containers */
+  box-sizing: border-box;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+/* Style for all three inner containers */
+.main-container > div {
+  margin: 10px; /* Separates the rectangles from each other */
+  border-radius: 12px; /* Gives them the "rectangle" shape with soft corners */
+  padding: 24px;
+  
+  /* Less transparent background (Adjust 0.8 to change opacity) */
+  background: rgba(46, 43, 43, 0.85); 
+  
+  /* Adds a subtle shadow to make them "float" */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  
+  /* Dark mode support (Optional) */
+  color: #1a1a1a; 
 }
 
-#center {
+/* Side Containers (25%) */
+.main-container > div:first-child,
+.main-container > div:last-child {
+  flex: 25;
+}
+
+/* Middle Container (50%) */
+.main-container > div:nth-child(2) {
+  flex: 50;
+  /* If you want the middle one even more solid/less transparent */
+  background: rgba(46, 43, 43, 0.85);
+}
+
+.painting-card img {
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+
+.history-list {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  gap: 15px;
+  max-height: 80vh; /* Keeps the list from growing forever */
+  overflow-y: auto; /* Adds a scrollbar if the list gets long */
+  padding: 10px;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+.history-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+.history-thumb {
   width: 100%;
+  height: 80px;
+  object-fit: cover; /* Crops the image to fit perfectly */
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+.history-item p {
+  font-size: 0.8rem;
+  margin: 0;
+  color: #eee;
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+.middle-column {
+  flex: 2; /* Takes up more space than the sidebars */
+  text-align: center;
+  padding: 20px;
+}
+
+.artwork-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-artwork-img {
+  width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.property-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.prop-btn {
+  background: #334155; /* Slate 700 */
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.prop-btn:hover {
+  background: #1e293b; /* Slate 800 */
+  border-color: #38bdf8; /* Soft Blue glow */
+  transform: translateY(-2px);
 }

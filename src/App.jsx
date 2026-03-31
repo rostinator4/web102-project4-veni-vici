@@ -1,120 +1,136 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
+const API_KEY = import.meta.env.VITE_ART_API_KEY;
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPainting, setCurrentPainting] = useState(null)
+  const [seenWorks, setSeenWorks] = useState([])
+  const [banned, setBanned] = useState([])
+
+  const addToBanned = (attribute) => {
+    if (!banned.includes(attribute)) {
+      setBanned((prev) => [...prev, attribute])
+    }
+  }
+
+  const handleRequest = async (trials = 0) => {
+
+    const url = `https://api.harvardartmuseums.org/object?apikey=${API_KEY}&hasimage=1&size=1&sort=random&classification=Paintings`;
+    if (trials > 10) {
+      alert("All available paintings match your ban list! Try unbanning something.");
+      return;
+    }
+    try {
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server Response: ${errorText}`);
+      }
+
+      const data = await response.json()
+
+
+      const artwork = data.records[0];
+
+      if (artwork && artwork.primaryimageurl) {
+        const newPainting = {
+          image: artwork.primaryimageurl,
+          title: artwork.title,
+          author: artwork.people?.[0]?.displayname || "Unknown",
+          century: artwork.century || "Unknown Century",
+          culture: artwork.culture || "Unknown Culture"
+        };
+
+        const isBanned = banned.includes(newPainting.author) ||
+          banned.includes(newPainting.century) ||
+          banned.includes(newPainting.culture);
+
+        if (isBanned) {
+          return handleRequest(trials + 1)
+        }
+
+
+        // 2. Append everything into one object
+        setCurrentPainting(newPainting);
+        setSeenWorks((prev) =>
+          [{ image: newPainting.image, title: newPainting.title }, ...prev])
+      } else {
+        return handleRequest(trials + 1);
+      }
+    }
+    catch (error) {
+      console.error("API Error: ", error)
+    };
+  }
+
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div>
+      <div className='main-container'>
+        <div className='side-container'>
+          <h2>What have we seen so far?</h2>
+          <div className="history-list">
+            {seenWorks.length > 0 ? (
+              seenWorks.map((painting, index) => (
+                <div key={index} className="history-item">
+                  <img
+                    src={painting?.image}
+                    alt={painting?.title}
+                    className="history-thumb"
+                  />
+                  <p>{painting?.title}</p>
+                </div>
+              ))
+            ) : (
+              <p></p>
+            )}
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        <div className="middle-column">
+          <h1>Veni-Vici!</h1>
+          <h3>Discover paintings from all over the world</h3>
 
-      <div className="ticks"></div>
+          {/* Only show this block if we have a painting */}
+          {currentPainting && (
+            <div className="artwork-card">
+              <h2>{currentPainting.title}</h2>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+              <div className="property-buttons">
+                <button className="prop-btn" onClick={() => addToBanned(currentPainting.author)}>{currentPainting.author}</button>
+                <button className="prop-btn" onClick={() => addToBanned(currentPainting.culture)}>{currentPainting.culture}</button>
+                <button className="prop-btn" onClick={() => addToBanned(currentPainting.century)}>{currentPainting.century}</button>
+              </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+              <img
+                src={currentPainting.image}
+                alt={currentPainting.title}
+                className="main-artwork-img"
+              />
+            </div>
+          )}
+
+          <br />
+          <button className='discover-button' onClick={handleRequest}>
+            🎨 Discover 🎨
+          </button>
+        </div>
+        <div className='side-container'>
+          <h2>Ban list</h2>
+          <div className='property-buttons'>
+            {banned.map((bannedItem, index) => (
+              <button
+                key={index}
+                className='prop-btn'
+                onClick={() => setBanned(banned.filter(item => item !== bannedItem))}>
+                {bannedItem}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
